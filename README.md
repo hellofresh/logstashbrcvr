@@ -5,8 +5,8 @@ logstashbrcvr (Logstash Heartbeat Receiver)
 
 The overall idea is to get [Logstash](https://www.elastic.co/products/logstash) downtime failures into New Relic.  
 
-So this simple HTTP service receives [heartbeat messages from Logstash](https://www.elastic.co/blog/how-to-check-logstashs-pulse) on the **private** HTTP endpoint `:8080/rcv` and "relays" these heartbeats to an [Nginx](http://nginx.org/en/) proxy definition (see below). Nginx itself then exposes that proxied endpoint to an **public** HTTP endpoint `:9090/mon` where New Relic (or something similar) can monitor
-the availability of Logstash (or any service which provides heartbeats over HTTP).
+So this simple HTTP service receives [heartbeat messages from Logstash](https://www.elastic.co/blog/how-to-check-logstashs-pulse) on the **private** HTTP endpoint `:8080/rcv` and "relays" these heartbeats to an [Nginx](http://nginx.org/en/) proxy definition (see below). Nginx itself then exposes that proxied endpoint to an **public** HTTP endpoint `:9090/mon` where New Relic (or something similar) can monitor the availability of Logstash (or any service which provides heartbeats over HTTP).  
+**Important: The assumption here is that the frequency of heartbeat HTTP messages comming in over the _private_ endpoint `:8080/rcv` is _much higher_ than the monitoring requests using the _public_ endpoint `:9090/mon`.** Otherwise the monitoring requests will drain the heartbeat channel too fast and causing false alerts in the availability checking service (New Relic).
 
 **A graphical representation of the idea:**
 
