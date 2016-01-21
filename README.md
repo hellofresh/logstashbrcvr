@@ -31,7 +31,8 @@ So this simple HTTP service receives [heartbeat messages from Logstash](https://
 
           upstream logstashbrcv {
               # the internal HTTP endpoint
-              server <private-ip>:8080;
+              // Prevent Denial-of-Service attacks which could be caused by the blocking channel read in logstashbrcvr.
+              server <private-ip>:8080 max_conns=20;
           }
 
           # the proxy itself
