@@ -21,7 +21,7 @@ So this simple HTTP service receives [heartbeat messages from Logstash](https://
           +--------------------+            +----------------------+             +------------------v-----------------+
           |                    |            |                      |             |                                    |
           | Logstash heartbeat |            | logstashbrcvr        |             | Nginx with publicly accessible URL |
-          | http output plugin +------------> HTTP "Relay" Service +-------------+ for NewRelic availability checker  |
+          | http output plugin +------------> HTTP "Relay" Service <-------------+ for NewRelic availability checker  |
           |                    |            |                      |             | proxying logstashbrcvr             |
           +--------------------+            +----------------------+             +------------------------------------+
 
