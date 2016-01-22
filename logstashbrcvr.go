@@ -75,16 +75,18 @@ type HeartbeatMonitor struct {
 
 // Implement http.Handler iface.
 func (hbMon *HeartbeatMonitor) ServeHTTP(w http.ResponseWriter, req *http.Request) {
-	/*
-		Listen to heartbeat messages on the channel in a blocking fashion.
-		This blocking channel reading will result in an '504 Gateway Time-out' error on the Nginx proxy definition
-		site, if no new heartbeat messages are available on the channel. If that's happening, it will cause
-		NewRelic's availability checker to trigger an alert.
-	*/
-	for hb := range *hbMon.heartbeatsChan {
-		// Reference: https://gobyexample.com/string-formatting
-		debug.Printf("(HeartbeatMonitor.ServeHTTP)  >>  Served heartbeat from channel: '%t'", hb)
+	// Read from channel containing the hearbeats in a non-blocking fashion.
+	// In case reading was unsuccessful, return error to client.
+	select {
+	case <-*hbMon.heartbeatsChan:
+		// We've got a heartbeat from the channel.
+		debug.Printf("(HeartbeatMonitor.ServeHTTP)  >>  Served heartbeat from channel.\n")
 		fmt.Fprintf(w, "{\"status\": \"ok\"}\n")
+		return
+	default:
+		debug.Printf("(HeartbeatMonitor.ServeHTTP)  >>  No hearbeat in channel.\n")
+		// Return error code to HTTP client.
+		http.NotFound(w, req)
 		return
 	}
 }
