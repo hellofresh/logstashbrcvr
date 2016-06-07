@@ -39,7 +39,7 @@ Example Nginx proxy configuration:
 +--------------------+            +----------------------+             +------------------v-----------------+
 |                    |            |                      |             |                                    |
 | Logstash heartbeat |            | logstashbrcvr        |             | Nginx with publicly accessible URL |
-| http output plugin +------------> HTTP "Relay" Service +-------------+ for NewRelic availability checker  |
+| http input plugin  +------------> HTTP "Relay" Service +-------------+ for NewRelic availability checker  |
 |                    |            |                      |             | proxying logstashbrcvr             |
 +--------------------+            +----------------------+             +------------------------------------+
 
